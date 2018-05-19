@@ -2,12 +2,58 @@
     x:Class="RaspbIoT.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:RaspbIoT"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:RaspbIoT"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:raspbIoTViewModel="using:RaspbIoTViewModel"
     mc:Ignorable="d">
-
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+    <Page.DataContext>
+        <raspbIoTViewModel:MainPageViewModel />
+    </Page.DataContext>
+    <Grid
+        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+        CornerRadius="100"
+        RequestedTheme="Dark">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="3*" />
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBox
+                Grid.Column="0"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                HorizontalTextAlignment="Right"
+                Text="{Binding RemoteIp, Mode=TwoWay}" />
+            <TextBox
+                Grid.Column="1"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                Text="{Binding Protocol, Mode=TwoWay}" />
+        </Grid>
+        <TextBlock
+            Grid.Row="1"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Center"
+            Text="{Binding RemoteMessage, Mode=TwoWay}"
+            TextAlignment="Center" />
+        <TextBox
+            Grid.Row="2"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Text="{Binding LocalMessage, Mode=TwoWay}" />
+        <Button
+            Grid.Row="3"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Command="{Binding ButtonPush}"
+            Content="Push" />
     </Grid>
 </Page>
+

@@ -14,6 +14,8 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using MetroLog;
+using MetroLog.Targets;
 
 namespace RaspbIoT
 {
@@ -28,6 +30,13 @@ namespace RaspbIoT
         /// </summary>
         public App()
         {
+#if DEBUG
+            LogManagerFactory.DefaultConfiguration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new FileStreamingTarget());
+#else
+            LogManagerFactory.DefaultConfiguration.AddTarget(LogLevel.Error, LogLevel.Fatal, new FileStreamingTarget());
+#endif
+            GlobalCrashHandler.Configure();
+
             this.InitializeComponent();
             this.Suspending += OnSuspending;
         }
