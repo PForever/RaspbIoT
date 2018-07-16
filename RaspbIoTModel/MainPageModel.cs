@@ -65,9 +65,10 @@ namespace RaspbIoTModel
             _actualizer = new Actualizer(_messageManager, _dbManager, _myCode);
 
             _requestManager = new RequestManager(_actualizer, _messageManager, _myCode);
-
-            _messageManager.ConnectMessageReceived += (o, args) =>  PopHandler(args.ConnectMessage);
-            _messageManager.TelemetryReceived += (o, args) =>  PopHandler(args.TelemetryInfo);
+            _Poped += PopHandler;
+            _Connected += PopHandler;
+            _messageManager.ConnectMessageReceived += (o, args) => _Connected?.Invoke(args.ConnectMessage);
+            _messageManager.TelemetryReceived += (o, args) => _Poped?.Invoke(args.TelemetryInfo);
             _server.ServerStart();
         }
 
@@ -96,8 +97,11 @@ namespace RaspbIoTModel
             get => _remoteMessage;
             set
             {
-                _remoteMessage = value;
-                _RemoteMessageChanged?.Invoke(value);
+                lock (this)
+                {
+                    _remoteMessage = value;
+                    _RemoteMessageChanged?.Invoke(value);
+                }
             }
         }
 
@@ -119,6 +123,7 @@ namespace RaspbIoTModel
 
         #region Pop
 
+        private event Action<Telemetry> _Poped;
         private void PopHandler(Telemetry telemetry)
         {
             RemoteMessage += $"\n(Tel) {telemetry.DeviceCode}: [{telemetry.TimeMarker}] ";
@@ -127,7 +132,7 @@ namespace RaspbIoTModel
                 RemoteMessage += $"{propertiesValue.Key} = {propertiesValue.Value}; ";
             }
         }
-
+        private event Action<ConnectMessage> _Connected;
         private void PopHandler(ConnectMessage connectMessage)
         {
             RemoteMessage +=

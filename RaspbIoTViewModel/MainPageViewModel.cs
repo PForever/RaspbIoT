@@ -1,12 +1,17 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows.Input;
+using Windows.Devices.Sensors;
+using Windows.UI.Core;
 using RaspbIoTModel;
 using RaspbIoTViewModel.Annotations;
+using Windows.UI.Xaml;
+
 namespace RaspbIoTViewModel
 {
-    public class MainPageViewModel : INotifyPropertyChanged
+    public class MainPageViewModel : DependencyObject, INotifyPropertyChanged
     {
         private readonly MainPageModel _model;
         public ICommand ButtonPush { get; }
@@ -56,17 +61,20 @@ namespace RaspbIoTViewModel
         public MainPageViewModel()
         {
             _model = new MainPageModel();
-            _model.RemoteMessageChanged += (value) => OnPropertyChanged(nameof(RemoteMessage)); //TODO Валидация по value
+            _model.RemoteMessageChanged += (value) => DispatcherNoty(); //TODO Валидация по value
 
             RemoteMessage = "Нет сообщений";
             LocalMessage = "Введите текст";
             RemoteIp = "192.168.1.34";
             Protocol = "UDP";
-
             ButtonPush = new PushCommand(_model.PushHandler);
         }
-        #region Noty
 
+        private void DispatcherNoty()
+        {
+            var t = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { OnPropertyChanged(nameof(RemoteMessage)); });
+        }
+        #region Noty
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]

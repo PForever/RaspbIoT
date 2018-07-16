@@ -286,7 +286,7 @@ namespace ConnectionLibraryTests
 
             //2
             IDictionary<string, IList<Telemetry>> telemetriesDictionary = new Dictionary<string, IList<Telemetry>>();
-            var task = Task.Run(() => GetData(properties, out telemetriesDictionary));
+            var task = Task.Run(() => GetData(out telemetriesDictionary, properties));
             Task.Delay(3000).Wait();
 
             foreach (var telemetriesList in telemetriesDictionaryExpected)

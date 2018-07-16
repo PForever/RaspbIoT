@@ -14,6 +14,7 @@ namespace MetroLogForUwp
 
         public Logger()
         {
+            LogManagerFactory.DefaultConfiguration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new StreamingFileTarget());
             Log = LogManagerFactory.DefaultLogManager.GetLogger(this.GetType());
         }
         //public static void InitLogger()

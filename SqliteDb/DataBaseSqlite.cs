@@ -19,7 +19,7 @@ namespace SqliteDb
 
         private SqliteDataReader ExecutCommand(string command, SqliteConnection db)
         {
-            Logger.Debug($"ExecutCommand to {db.ConnectionString}:\r\n {command}");
+            Logger.Info($"ExecutCommand to {db.ConnectionString}:\r\n {command}");
             SqliteCommand createTable = new SqliteCommand(command, db);
             var query = createTable.ExecuteReader();
             Logger.Debug($"Result of executCommand: {query}");
@@ -389,13 +389,19 @@ namespace SqliteDb
                     "SELECT ", PropName, ", ", PropValue, ", MAX(", TimeMark, ") AS ", TimeMark, " FROM ", deviceCode, " JOIN ", Tables.PROPERTIES,
                     " ON ", Tables.PROPERTIES, ".", PropCode, " = ", deviceCode, ".", PropCode,
                     " WHERE ", PropName, " IN ", propNames.ToSb()
-                    , " GROUP BY ", PropName, " \r\n");
+                    , " GROUP BY ", PropName, " \r\n",
+                    " UNION \r\n", 
+                    " SELECT ", PropName, ", ", "NULL, 0 FROM ", Tables.PROPERTIES, " WHERE \n\r",
+                    DeviceCode, " = '", deviceCode, "' AND ", IsSetter, " = ", "1");
             }
             else
             {
                 command = StringBuild(
                     "SELECT ", PropName, ", ", PropValue, ", ", TimeMark,  " FROM ", deviceCode, " WHERE ", PropName, " IN ", propNames.ToSb(),
-                    " AND ", TimeMark, " > ", timeMarker, " \r\n");
+                    " AND ", TimeMark, " > ", timeMarker, " \r\n",
+                    " UNION \r\n",
+                    " SELECT ", PropName, ", ", "NULL, 0 FROM ", Tables.PROPERTIES, " WHERE \n\r",
+                    DeviceCode, " = '", deviceCode, "' AND ", IsSetter, " = ", "1");
             }
 
             IList<(string propName, string timeMarker, string propValue)> QueryHandler(SqliteDataReader query)
